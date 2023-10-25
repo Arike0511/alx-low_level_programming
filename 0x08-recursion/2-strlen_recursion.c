@@ -2,7 +2,7 @@
 
 /**
  *  _strlen_recursion - a function that returns the length of a string
- *  @s: input value 
+ *  @s: input value
  *  Return:length
  */
 
@@ -13,7 +13,7 @@ int _strlen_recursion(char *s)
 	if (*s)
 	{
 		length += _strlen_recursion(s + 1);
-		length ++;
+		length++;
 	}
 	return (length);
 }
