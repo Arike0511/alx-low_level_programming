@@ -6,6 +6,7 @@
  * @av: double pointer array
  * Return: 0
  */
+
 char *argstostr(int ac, char **av)
 {
 	int imi, nima, r = 0, l = 0;
@@ -14,7 +15,7 @@ char *argstostr(int ac, char **av)
 	if (ac == 0 || av == NULL)
 		return (NULL);
 
-	for (imi = 0; imi< ac; imi++)
+	for (imi = 0; imi < ac; imi++)
 	{
 		for (nima = 0; av[imi][nima]; nima++)
 			l++;
