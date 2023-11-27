@@ -1,45 +1,73 @@
 #include "main.h"
 
 /**
- * append_text_to_file - appends text at the end of a file
- * @filename: filename.
- * @text_content: added content.
- * Return: 1 if the file exists. -1 if the fails does not exist
- * or if it fails.
+ * error_file - checks if files can be opened.
+ * @file_from: file_from.
+ * @file_to: file_to.
+ * @argv: arguments vector.
+ * Return: no return.
  */
 
-int append_text_to_file(const char *filename, char *text_content)
+void error_file(int file_from, int file_to, char *argv[])
 {
-	int folder;
-	int newletters;
-	int rwrit;
-
-	if (!filename)
+	if (file_from == -1)
 	{
-		return (-1);
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+		exit(98);
+	}
+	if (file_to == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
+		exit(99);
+	}
+}
+
+/**
+ * main - check the code for Holberton School students.
+ * @argc: number of arguments.
+ * @argv: arguments vector.
+ * Return: Always 0.
+ */
+
+int main(int argc, char *argv[])
+{
+	int file_from, file_to, error_close;
+	ssize_t newchars, nwrite;
+	char buffer[1024];
+
+	if (argc != 3)
+	{
+		dprintf(STDERR_FILENO, "%s\n", "Usage: cp file_from file_to");
+		exit(97);
 	}
 
-	folder = open(filename, O_WRONLY | O_APPEND);
+	file_from = open(argv[1], O_RDONLY);
+	file_to = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC | O_APPEND, 0664);
+	error_file(file_from, file_to, argv);
 
-	if (folder == -1)
+	newchars = 1024;
+	while (newchars == 1024)
 	{
-		return (-1);
+		newchars = read(file_from, buffer, 1024);
+		if (newchars == -1)
+			error_file(-1, 0, argv);
+		nwrite = write(file_to, buffer, newchars);
+		if (nwrite == -1)
+			error_file(0, -1, argv);
 	}
 
-	if (text_content)
+	error_close = close(file_from);
+	if (error_close == -1)
 	{
-		for (newletters = 0; text_content[newletters]; newletters++)
-			;
-
-		rwrit = write(folder, text_content, newletters);
-
-		if (rwrit == -1)
-		{
-			return (-1);
-		}
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", file_from);
+		exit(100);
 	}
 
-	close(folder);
-
-	return (1);
+	error_close = close(file_to);
+	if (error_close == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", file_from);
+		exit(100);
+	}
+	return (0);
 }
